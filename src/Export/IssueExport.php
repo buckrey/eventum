@@ -20,6 +20,7 @@ use Port\Doctrine\DoctrineReader;
 use Port\Reader;
 use Port\Steps\Step\ConverterStep;
 use Port\Steps\StepAggregator;
+use Port\ValueConverter\DateTimeToStringValueConverter;
 use Port\Writer;
 use RuntimeException;
 
@@ -40,17 +41,29 @@ class IssueExport
 
         $workflow = new StepAggregator($reader);
         $workflow->addWriter($writer);
-        $converterStep = new ConverterStep([
-            function (array $item) {
-                return [
-                    'Issue ID' => $item['id'],
-                    'Title' => $item['summary'],
-                ];
-            },
-        ]);
-        $workflow->addStep($converterStep);
+
+        $workflow->addStep($this->createConverters());
 
         $workflow->process();
+    }
+
+    private function createConverters(): ConverterStep
+    {
+        $converterStep = new ConverterStep();
+        $dateTimeConverter = new DateTimeToStringValueConverter();
+        $converterStep->add(function (array $item) use ($dateTimeConverter) {
+            return [
+                'Issue ID' => $item['id'],
+                'Title' => $item['summary'],
+                'Author' => $item['user_id'],
+                'Description' => $item['description'],
+                'State' => $item['status_id'],
+                'Created At (UTC)' => $dateTimeConverter($item['createdDate']),
+                'Updated At (UTC)' => $dateTimeConverter($item['updatedDate']),
+            ];
+        });
+
+        return $converterStep;
     }
 
     private function createReader(Issue $issue): Reader
