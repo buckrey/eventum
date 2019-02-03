@@ -13,6 +13,7 @@
 
 namespace Eventum\Model\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,10 +38,40 @@ class Issue
     private $project_id;
 
     /**
+     * @var int
+     * @ORM\Column(name="iss_usr_id", type="integer", nullable=false)
+     */
+    private $user_id;
+
+    /**
      * @var string
      * @ORM\Column(name="iss_summary", type="string", length=128, nullable=false)
      */
     private $summary;
+
+    /**
+     * @var string
+     * @ORM\Column(name="iss_description", type="text", length=65535, nullable=false)
+     */
+    private $description;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="iss_sta_id", type="integer", nullable=false)
+     */
+    private $status_id;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(name="iss_created_date", type="datetime", nullable=false)
+     */
+    private $createdDate;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(name="iss_updated_date", type="datetime", nullable=true)
+     */
+    private $updatedDate;
 
     /**
      * @var Commit[]
@@ -74,6 +105,18 @@ class Issue
         $this->summary = $summary;
 
         return $this;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     /**
@@ -114,5 +157,53 @@ class Issue
     public function getProjectId(): int
     {
         return $this->project_id;
+    }
+
+    public function setUserId(int $issUsrId): self
+    {
+        $this->user_id = $issUsrId;
+
+        return $this;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function setStatusId(int $status_id): self
+    {
+        $this->status_id = $status_id;
+
+        return $this;
+    }
+
+    public function getStatusId(): int
+    {
+        return $this->status_id;
+    }
+
+    public function setCreatedDate(DateTime $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): DateTime
+    {
+        return $this->createdDate;
+    }
+
+    public function setUpdatedDate(?DateTime $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?DateTime
+    {
+        return $this->updatedDate;
     }
 }
